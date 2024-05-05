@@ -37,12 +37,12 @@ async function login(req, res, next) {
       );
     }
 
-    const loginSuccess = await authenticationServices.checkLoginCredentials(
+    const loginBerhasil = await authenticationServices.checkLoginCredentials(
       email,
       password
     );
 
-    if (!loginSuccess) {
+    if (!loginBerhasil) {
       attempts[email].failed++;
       const remainingAttempts = 5 - attempts[email].failed;
       throw errorResponder(
@@ -54,7 +54,7 @@ async function login(req, res, next) {
     attempts[email].failed = 0;
     attempts[email].AkhirAttempt = new Date();
 
-    return res.status(200).json(loginSuccess);
+    return res.status(200).json(loginBerhasil);
   } catch (error) {
     return next(error);
   }
