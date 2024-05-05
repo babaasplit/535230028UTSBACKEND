@@ -1,7 +1,6 @@
 {
   "name": "midtest-backend-programming-template",
   "version": "1.0.0",
-  "description": "",
   "main": "src/index.js",
   "scripts": {
     "dev": "nodemon ./src/index.js",
@@ -26,6 +25,7 @@
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
     "method-override": "^3.0.0",
+    "migrate": "^2.1.0",
     "mongoose": "^7.6.10",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
@@ -44,5 +44,6 @@
     "nodemon": "^3.1.0",
     "pino-pretty": "^10.3.1",
     "prettier": "^3.2.5"
-  }
+  },
+  "description": ""
 }
