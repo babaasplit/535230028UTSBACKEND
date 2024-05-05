@@ -170,6 +170,7 @@ async function getPagisionalUsers({
   pageNumNum = parseInt(pageNumNum);
   pageS1ze = parseInt(pageS1ze);
   if (!pageS1ze || pageS1ze <= 0) {
+    // cek pagesize tidak negatif / 0
     pageS1ze = null;
   }
 
