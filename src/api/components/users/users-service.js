@@ -201,7 +201,7 @@ async function getPagisionalUsers({
   }
 
   filteredUsers.sort((a, b) => {
-    const aValue = a[sortField];
+    const aValue = a[sortField]; //Membandingkan nilai dua properti pengguna berdasarkan urutan pengurutan yang ditentukan
     const bValue = b[sortField];
     if (sortOrder === 'asc') {
       return aValue.localeCompare(bValue);
@@ -210,8 +210,8 @@ async function getPagisionalUsers({
     }
   });
 
-  let FirstOpt = (pageNumNum - 1) * pageS1ze;
-  let lastOpt = FirstOpt + pageS1ze;
+  let FirstOpt = (pageNumNum - 1) * pageS1ze; // Indeks awal data pengguna pada halaman saat ini
+  let lastOpt = FirstOpt + pageS1ze; // Indeks akhir data pengguna pada halaman saat ini
   if (!pageS1ze) {
     FirstOpt = 0;
     lastOpt = filteredUsers.length;
@@ -219,11 +219,11 @@ async function getPagisionalUsers({
   const pagiMorningUsers = filteredUsers.slice(FirstOpt, lastOpt);
   return {
     page_number: pageNumNum,
-    page_size: pageS1ze || filteredUsers.length,
+    page_size: pageS1ze || filteredUsers.length, //jumlah total pengguna jika ukuran halaman tidak diberikan
     count: pagiMorningUsers.length,
-    total_pages: pageS1ze ? Math.ceil(filteredUsers.length / pageS1ze) : 1,
-    has_previous_page: pageNumNum > 1,
-    has_next_page: lastOpt < filteredUsers.length,
+    total_pages: pageS1ze ? Math.ceil(filteredUsers.length / pageS1ze) : 1, //Total halaman berdasarkan jumlah pengguna dan ukuran halaman
+    has_previous_page: pageNumNum > 1, //Menunjukkan apakah ada halaman sebelumnya
+    has_next_page: lastOpt < filteredUsers.length, // Menunjukkan apakah ada halaman selanjutnya
     data: pagiMorningUsers.map((user) => ({
       id: user.id,
       name: user.name,
