@@ -138,6 +138,7 @@ async function checkPassword(userId, password) {
  * @param {string} password - Password
  * @returns {boolean}
  */
+/** */
 async function changePassword(userId, password) {
   const user = await usersRepository.getUser(userId);
 
@@ -159,6 +160,7 @@ async function changePassword(userId, password) {
 
   return true;
 }
+
 async function getPagisionalUsers({
   pageNumNum = 1,
   pageS1ze = null,
@@ -170,10 +172,12 @@ async function getPagisionalUsers({
   if (!pageS1ze || pageS1ze <= 0) {
     pageS1ze = null;
   }
+
   let [sortField, sortOrder] = sort.split(':');
   if (!['email', 'name'].includes(sortField)) {
     sortField = 'email';
   }
+
   sortOrder = sortOrder.toLowerCase();
   if (!['asc', 'desc'].includes(sortOrder)) {
     sortOrder = 'asc';
@@ -205,21 +209,21 @@ async function getPagisionalUsers({
     }
   });
 
-  let startIndex = (pageNumNum - 1) * pageS1ze;
-  let endIndex = startIndex + pageS1ze;
+  let FirstOpt = (pageNumNum - 1) * pageS1ze;
+  let lastOpt = FirstOpt + pageS1ze;
   if (!pageS1ze) {
-    startIndex = 0;
-    endIndex = filteredUsers.length;
+    FirstOpt = 0;
+    lastOpt = filteredUsers.length;
   }
-  const paginatedUsers = filteredUsers.slice(startIndex, endIndex);
+  const pagiMorningUsers = filteredUsers.slice(FirstOpt, lastOpt);
   return {
     page_number: pageNumNum,
     page_size: pageS1ze || filteredUsers.length,
-    count: paginatedUsers.length,
+    count: pagiMorningUsers.length,
     total_pages: pageS1ze ? Math.ceil(filteredUsers.length / pageS1ze) : 1,
     has_previous_page: pageNumNum > 1,
-    has_next_page: endIndex < filteredUsers.length,
-    data: paginatedUsers.map((user) => ({
+    has_next_page: lastOpt < filteredUsers.length,
+    data: pagiMorningUsers.map((user) => ({
       id: user.id,
       name: user.name,
       email: user.email,
