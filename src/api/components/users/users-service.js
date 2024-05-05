@@ -5,7 +5,21 @@ const { hashPassword, passwordMatched } = require('../../../utils/password');
  * Get list of users
  * @returns {Array}
  */
+async function getUsers() {
+  const users = await usersRepository.getUsers();
 
+  const results = [];
+  for (let i = 0; i < users.length; i += 1) {
+    const user = users[i];
+    results.push({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    });
+  }
+
+  return results;
+}
 /**
  * Get user detail
  * @param {string} id - User ID
@@ -145,6 +159,73 @@ async function changePassword(userId, password) {
 
   return true;
 }
+async function getPagisionalUsers({
+  pageNumNum = 1,
+  pageS1ze = null,
+  sort = 'email:asc',
+  search = null,
+}) {
+  pageNumNum = parseInt(pageNumNum);
+  pageS1ze = parseInt(pageS1ze);
+  if (!pageS1ze || pageS1ze <= 0) {
+    pageS1ze = null;
+  }
+  let [sortField, sortOrder] = sort.split(':');
+  if (!['email', 'name'].includes(sortField)) {
+    sortField = 'email';
+  }
+  sortOrder = sortOrder.toLowerCase();
+  if (!['asc', 'desc'].includes(sortOrder)) {
+    sortOrder = 'asc';
+  }
+  let searchField = null;
+  let searchKey = null;
+  if (search) {
+    const parts = search.split(':');
+    if (parts.length === 2 && ['email', 'name'].includes(parts[0])) {
+      searchField = parts[0];
+      searchKey = parts[1];
+    }
+  }
+
+  const users = await usersRepository.getUsers();
+  let filteredUsers = users;
+  if (searchField && searchKey) {
+    const searchRegex = new RegExp(searchKey, 'i');
+    filteredUsers = users.filter((user) => searchRegex.test(user[searchField]));
+  }
+
+  filteredUsers.sort((a, b) => {
+    const aValue = a[sortField];
+    const bValue = b[sortField];
+    if (sortOrder === 'asc') {
+      return aValue.localeCompare(bValue);
+    } else {
+      return bValue.localeCompare(aValue);
+    }
+  });
+
+  let startIndex = (pageNumNum - 1) * pageS1ze;
+  let endIndex = startIndex + pageS1ze;
+  if (!pageS1ze) {
+    startIndex = 0;
+    endIndex = filteredUsers.length;
+  }
+  const paginatedUsers = filteredUsers.slice(startIndex, endIndex);
+  return {
+    page_number: pageNumNum,
+    page_size: pageS1ze || filteredUsers.length,
+    count: paginatedUsers.length,
+    total_pages: pageS1ze ? Math.ceil(filteredUsers.length / pageS1ze) : 1,
+    has_previous_page: pageNumNum > 1,
+    has_next_page: endIndex < filteredUsers.length,
+    data: paginatedUsers.map((user) => ({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    })),
+  };
+}
 
 module.exports = {
   getUsers,
@@ -155,4 +236,5 @@ module.exports = {
   emailIsRegistered,
   checkPassword,
   changePassword,
+  getPagisionalUsers,
 };
